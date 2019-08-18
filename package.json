@@ -1,0 +1,20 @@
+{
+  "name": "cordova-tpsdk",
+  "version": "1.0.1",
+  "description": "TPSDK Android Plugin for Cordova 3.X",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cordova",
+    "tpsdk",
+    "intent"
+  ],
+  "author": "COFFE",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://coffe.io"
+  },
+  "homepage": "https://coffe.io"
+}
