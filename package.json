@@ -1,10 +1,14 @@
 {
-  "name": "cordova-tpsdk",
+  "name": "tpsdk",
   "version": "1.0.1",
   "description": "TPSDK Android Plugin for Cordova 3.X",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rommzestz/tpsdk.git"
   },
   "keywords": [
     "cordova",
@@ -14,7 +18,7 @@
   "author": "COFFE",
   "license": "ISC",
   "bugs": {
-    "url": "https://coffe.io"
+    "url": "https://github.com/rommzestz/tpsdk/issues"
   },
-  "homepage": "https://coffe.io"
+  "homepage": "https://github.com/rommzestz/tpsdk#readme"
 }
