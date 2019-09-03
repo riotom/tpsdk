@@ -1,40 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://cordova.apache.org/ns/plugins/1.0" id="com.rdt.tpsdk" version="1.0.6">
 
-<plugin xmlns="http://cordova.apache.org/ns/plugins/1.0"
-           id="com.rdt.tpsdk"
-      version="1.0.1">
-    <name>TPSDK</name>
+	<name>TPSDK</name>
+	
     <description>TPSDK Auth for Cordova</description>
+	
     <license>Apache</license>
-    <keywords>cordova,tpsdk</keywords>
 
-    <js-module src="www/plugin.js" name="TPSDKPlugin">
-        <clobbers target="TPSDKPlugin" />
+	<!--eg.: window.cordova.plugins.sensorManager.{one function from the module}-->
+    <js-module src="www/plugin.js" name="TPSDK">
+        <clobbers target="plugins.TPSDK" />
     </js-module>
 
     <!-- android -->
     <platform name="android">
+	
+		<!-- copy Lib -->
+		<source-file src="src/android/lib/gson-2.3.1.jar" target-dir="libs" />
+		
+		<!-- copy Java Class -->
+		<source-file src="src/android/TPSDK.java" target-dir="src/com/rdt/tpsdk" />
+		<source-file src="src/android/Manager.java" target-dir="src/com/rdt/tpsdk" />
+		<source-file src="src/android/OnCase.java" target-dir="src/com/rdt/tpsdk" />
+		<source-file src="src/android/Receiver.java" target-dir="src/com/rdt/tpsdk" />
+		<source-file src="src/android/Val.java" target-dir="src/com/rdt/tpsdk" />
+		<source-file src="src/android/model/ActionEnum.java" target-dir="src/com/rdt/tpsdk/model" />
+		<source-file src="src/android/model/Authorize.java" target-dir="src/com/rdt/tpsdk/model" />
+		<source-file src="src/android/model/BaseInfo.java" target-dir="src/com/rdt/tpsdk/model" />
+		<source-file src="src/android/model/Signature.java" target-dir="src/com/rdt/tpsdk/model" />
+		<source-file src="src/android/model/Transaction.java" target-dir="src/com/rdt/tpsdk/model" />
+		
+		<!-- SET Java Class -->
+		<feature name="TPSDK">
+            <param name="android-package" value="com.rdt.tpsdk.TPSDK" />
+        </feature>
+		<!-- or SET Java Class -->
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="TPSDK" >
                 <param name="android-package" value="com.rdt.tpsdk.TPSDK"/>
             </feature>
         </config-file>
 
-        <source-file src="src/android/TPSDK.java" target-dir="src/com/rdt/tpsdk/TPSDK" />
-
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+			<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+			<uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+			<uses-permission android:name="android.permission.READ_INTERNAL_STORAGE"/>
+			<uses-permission android:name="android.permission.VIBRATE" />
+			<uses-permission android:name="android.permission.INTERNET" />
+			<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+        </config-file>
+		
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            
 			<receiver
-                android:name="com.rdt.tpsdk.TPSDK$ReferralReceiver"
+                android:name="com.rdt.tpsdk.TPSDK"
                 android:enabled="true"
                 android:exported="true"
                 android:label="@string/app_name">
                 <intent-filter>
-                    <action android:name="com.android.vending.INSTALL_REFERRER" />
+                    <category android:name="android.intent.category.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
                 </intent-filter>
             </receiver>
-			
-			<activity android:exported="true" android:name="com.rdt.tpsdk.Receiver">
+			<activity
+				android:name="com.rdt.tpsdk.Receiver"
+				android:exported="true">
 				<intent-filter>
 					<action android:name="android.intent.action.VIEW" />
 					<category android:name="android.intent.category.DEFAULT" />
@@ -42,7 +72,6 @@
 					<data android:scheme="tp_sdk_kylin" />
 				</intent-filter>
 			</activity>
-			
         </config-file>
     </platform>
 </plugin>
