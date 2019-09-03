@@ -7,9 +7,11 @@
 
 1. Confirm that the following is now in your `config.xml` file:
 
-    ```xml
-    <plugin name="TPSDK" value="com.rdt.tpsdk.TPSDK" />
-    ```
+```xml
+    <platform name="android">
+        <plugin name="TPSDK" value="com.rdt.tpsdk.TPSDK" />
+    </platform>
+```
 
 ## Using the plugin
 
