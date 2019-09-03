@@ -1,139 +1,107 @@
-package com.rdt.tpsdk;
+package com.rdt.tpsdk;//
 
-import java.util.HashMap;
+import java.util.HashMap;//
 import java.util.Map;
+import java.util.Date;
 
-import org.apache.cordova.CordovaActivity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.Html;
 import android.util.Log;
+import android.widget.Toast;
+import android.app.Activity;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
+import android.content.SharedPreferences;
 
+import org.apache.cordova.CordovaActivity;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaResourceApi;
 import org.apache.cordova.PluginResult;
+import org.apache.cordova.PluginResult.Status;
+
+import com.rdt.tpsdk.Val;
+import com.rdt.tpsdk.OnCase;
+import com.rdt.tpsdk.Manager;
+import com.google.gson.Gson;
+import com.rdt.tpsdk.model.Authorize;
+import com.rdt.tpsdk.model.Transaction;
 
 public class TPSDK extends CordovaPlugin {
     private static final String LOG_TAG = "TPSDK";
-    private static String installReferrer = null;
-    private CallbackContext onNewIntentCallbackContext = null;
-
-    /**
-     * @return true iff if the action was executed successfully, else false.
+	
+    SharedPreferences prefs;
+	CountDownTimer timer;
+	
+    private CallbackContext AwaitCallback = null;
+	
+	/**
+     * @return true if the action was executed successfully, else false.
      */
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
         try {
-            if ("startActivity".equals(action)) {
-                if (args.length() != 1) {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
-                    return false;
-                }
-                // Parse the arguments
-                final CordovaResourceApi resourceApi = webView.getResourceApi();
-                JSONObject obj = args.getJSONObject(0);
-                String type = obj.has("type") ? obj.getString("type") : null;
-                Uri uri = obj.has("url") ? resourceApi.remapUri(Uri.parse(obj.getString("url"))) : null;
-                JSONObject extras = obj.has("extras") ? obj.getJSONObject("extras") : null;
-                Map<String, String> extrasMap = new HashMap<String, String>();
-
-                // Populate the extras if any exist
-                if (extras != null) {
-                    JSONArray extraNames = extras.names();
-                    for (int i = 0; i < extraNames.length(); i++) {
-                        String key = extraNames.getString(i);
-                        String value = extras.getString(key);
-                        extrasMap.put(key, value);
-                    }
-                }
-
-                startActivity(obj.getString("action"), uri, type, extrasMap);
-                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
-                return true;
-            } else if ("hasExtra".equals(action)) {
-                if (args.length() != 1) {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
-                    return false;
-                }
-                Intent i = ((CordovaActivity)this.cordova.getActivity()).getIntent();
-                String extraName = args.getString(0);
-                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, i.hasExtra(extraName)));
-                return true;
-            } else if ("getExtra".equals(action)) {
-                if (args.length() != 1) {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
-                    return false;
-                }
-                Intent i = ((CordovaActivity)this.cordova.getActivity()).getIntent();
-                String extraName = args.getString(0);
-                if (i.hasExtra(extraName)) {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, i.getStringExtra(extraName)));
-                    return true;
-                } else {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR));
-                    return false;
-                }
-            } else if ("getUri".equals(action)) {
-                if (args.length() != 0) {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
-                    return false;
-                }
-                Intent i = ((CordovaActivity)this.cordova.getActivity()).getIntent();
-                String uri = i.getDataString();
-                if (uri == null && installReferrer != null) {
-                    uri = installReferrer;  // App just installed, received play store referrer intent.
-                    Log.i(LOG_TAG, String.format("URI is an install referrer: %s", installReferrer));
-                }
-                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, uri));
-                return true;
-            } else if ("onNewIntent".equals(action)) {
-                // Save reference to the callback; will be called on "new intent" events.
-                this.onNewIntentCallbackContext = callbackContext;
-
-                if (args.length() != 0) {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
-                    return false;
-                }
-
-                PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
+			Log.e(LOG_TAG, "RECEIVE INTENT -> " + action);
+			
+            if ( action.equals("AuthTP") ) {
+			
+				clean();
+				
+				this.AwaitCallback = callbackContext;
+				
+				PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
                 result.setKeepCallback(true); // Reuse the callback on intent events.
                 callbackContext.sendPluginResult(result);
-                return true;
-            } else if ("sendBroadcast".equals(action)) {
-                if (args.length() != 1) {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
-                    return false;
-                }
-
-                // Parse the arguments
-                JSONObject obj = args.getJSONObject(0);
-
-                JSONObject extras = obj.has("extras") ? obj.getJSONObject("extras") : null;
-                Map<String, String> extrasMap = new HashMap<String, String>();
-
-                // Populate the extras if any exist
-                if (extras != null) {
-                    JSONArray extraNames = extras.names();
-                    for (int i = 0; i < extraNames.length(); i++) {
-                        String key = extraNames.getString(i);
-                        String value = extras.getString(key);
-                        extrasMap.put(key, value);
-                    }
-                }
-
-                sendBroadcast(obj.getString("action"), extrasMap);
-                callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
-                return true;
-            }
-            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
-            return false;
+				
+                AuthTP();
+				
+				timer = new CountDownTimer(30000, 500) {
+					public void onTick(long millisUntilFinished) {
+						
+					}
+					public void onFinish() {
+						timer.cancel();
+						ResolveCallback( "{\"result\":3}" );
+					}
+				};
+				timer.start();
+				
+				return true;
+				
+            } else if ( action.equals("PushAction") ) {
+			
+				this.AwaitCallback = callbackContext;
+				
+				PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
+                result.setKeepCallback(true); // Reuse the callback on intent events.
+                callbackContext.sendPluginResult(result);
+				
+                PushAction( args );
+				
+				timer = new CountDownTimer(30000, 500) {
+					public void onTick(long millisUntilFinished) {
+						
+					}
+					public void onFinish() {
+						timer.cancel();
+						ResolveCallback( "{\"result\":3}" );
+					}
+				};
+				timer.start();
+				
+				return true;
+				
+            } else {
+				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
+				return false;
+			}
         } catch (JSONException e) {
             final String errorMessage = e.getMessage();
             Log.e(LOG_TAG, errorMessage);
@@ -141,17 +109,94 @@ public class TPSDK extends CordovaPlugin {
             return false;
         }
     }
+	
+	// JSONArray action_data
+	public void PushAction( JSONArray action_data ) {
+		Manager.getInstance().pushTransaction(cordova.getActivity(), getTransaction( action_data ), new OnCase() {
+			@Override
+			public void onSuccess(String data) {
+				ResolveCallback( data );
+			}
+			@Override
+			public void onError(String data) {
+				//{"key":"value"}
+				ResolveCallback( data );
+			}
+			@Override
+			public void onCancel(String data) {
+				//{"key":"value"}
+				ResolveCallback( data );
+			}
+		});
+	}
 
-    @Override
-    public void onNewIntent(Intent intent) {
-
-        if (this.onNewIntentCallbackContext != null) {
-            PluginResult result = new PluginResult(PluginResult.Status.OK, intent.getDataString());
-            result.setKeepCallback(true);
-            this.onNewIntentCallbackContext.sendPluginResult(result);
-        }
+	private Transaction getTransaction( JSONArray action_data ) {
+		int expired = getTimestamp()+30;
+		Transaction transaction = new Transaction();
+		transaction.setBlockchain(Val.BLOCKCHAIN);
+		transaction.setDappName(Val.DAPP_NAME);
+		transaction.setDappIcon(Val.DAPP_ICON);
+		try{
+			JSONObject obj = action_data.getJSONObject(0);
+			transaction.setActions( obj.getString("transaction") );
+		} catch (JSONException e) {
+			transaction.setActions( "error" );
+		}
+		transaction.setExpired( expired );
+		return transaction;
     }
 
+	public void AuthTP() {
+		Manager.getInstance().authorize(cordova.getActivity(), getAuthorize(), new OnCase() {
+			@Override
+			public void onSuccess(String data) {
+				try {
+					//{"key":"value"}
+					JSONObject ja = new JSONObject(data);
+					String action = ja.getString("action");
+					Val.WALLET_account = ja.getString("account");
+					Val.WALLET_wallet = ja.getString("wallet");
+					Val.WALLET_publickey = ja.getString("publickey");
+					save();
+				} catch (Exception e) { }
+				ResolveCallback( data );
+			}
+			@Override
+			public void onError(String data) {
+				//{"key":"value"}
+				ResolveCallback( data );
+			}
+			@Override
+			public void onCancel(String data) {
+				//{"key":"value"}
+				ResolveCallback( data );
+			}
+		});
+	}
+	
+	private Authorize getAuthorize() {
+        int expired = getTimestamp()+30;
+        Authorize authorize = new Authorize();
+        authorize.setBlockchain(Val.BLOCKCHAIN);
+        authorize.setDappName(Val.DAPP_NAME);
+        authorize.setDappIcon(Val.DAPP_ICON);
+        authorize.setActionId("web-99784c28-70f0-49ff-3654-"+getTimestamp());
+        authorize.setCallbackUrl(""/*Val.DAPP_URL*/);
+        //authorize.setExpired( Long.valueOf(expired) );
+        authorize.setExpired( expired );
+        authorize.setMemo(Val.DAPP_MEMO);
+        return authorize;
+    }
+	
+    public void ResolveCallback(String message) {
+        if (this.AwaitCallback != null) {
+            PluginResult result = new PluginResult(PluginResult.Status.OK, message);
+            result.setKeepCallback(true);
+            this.AwaitCallback.sendPluginResult(result);
+			timer.cancel();
+        }
+    }
+	
     void startActivity(String action, Uri uri, String type, Map<String, String> extras) {
         Intent i = uri != null ? new Intent(action, uri) : new Intent(action);
 
@@ -184,26 +229,36 @@ public class TPSDK extends CordovaPlugin {
         ((CordovaActivity)this.cordova.getActivity()).startActivity(i);
     }
 
-    void sendBroadcast(String action, Map<String, String> extras) {
-        Intent intent = new Intent();
-        intent.setAction(action);
-        for (Map.Entry<String, String> entry : extras.entrySet()) {
-            intent.putExtra(entry.getKey(), entry.getValue());
-        }
-        ((CordovaActivity)this.cordova.getActivity()).sendBroadcast(intent);
+    public static int getTimestamp(){
+        Date date = new Date();
+        long millis = date.getTime();
+        long Lsec = millis/1000;
+        int sec = (int) Lsec;
+        return sec;
+    }
+	
+	public void load(){
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(cordova.getActivity());
+        Val.WALLET_account = settings.getString("account", "");
+        Val.WALLET_wallet = settings.getString("wallet", "");
+        Val.WALLET_publickey = settings.getString("publickey", "");
     }
 
-    // Receiver that listens for com.android.vending.INSTALL_REFERRER, an intent sent by the
-    // Play Store on installation when the referrer parameter of the install URL is populated:
-    // https://play.google.com/store/apps/details?id=|APP_ID|&referrer=|REFERRER|
-    public static class ReferralReceiver extends BroadcastReceiver {
-        private static final String LOG_TAG = "ReferralReceiver";
+    public void save(){
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(cordova.getActivity());
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("account", Val.WALLET_account);
+        editor.putString("wallet", Val.WALLET_wallet);
+        editor.putString("publickey", Val.WALLET_publickey);
+        editor.commit();
+    }
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Store the install referrer so we can return it when getUri is called.
-            installReferrer = intent.getStringExtra("referrer");
-            Log.i(LOG_TAG, String.format("Install referrer: %s", installReferrer));
-        }
+    public void clean(){
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(cordova.getActivity());
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("account", "");
+        editor.putString("wallet", "");
+        editor.putString("publickey", "");
+        editor.commit();
     }
 }
