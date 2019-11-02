@@ -6,12 +6,167 @@
     <description>TPSDK Auth for Cordova</description>
 	
     <license>Apache</license>
-
-	<!--eg.: window.cordova.plugins.sensorManager.{one function from the module}-->
+	
     <js-module src="www/plugin.js" name="TPSDK">
         <clobbers target="plugins.TPSDK" />
     </js-module>
+	
+	<!-- ios -->
+    <platform name="ios">
+		
+        <!-- Cordova 2.5+ -->
+        <config-file target="config.xml" parent="/*">
+            <feature name="TPSDK">
+                <param name="ios-package" value="CDVTPSKD" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+		
+        <header-file src="src/ios/CDVTPSKD.h" />
+        <source-file src="src/ios/CDVTPSKD.m" />
 
+        <header-file src="src/ios/TPSDK.framework/Headers/TPApi.h" />
+        <header-file src="src/ios/TPSDK.framework/Headers/TPBlockchainHeader.h" />
+        <header-file src="src/ios/TPSDK.framework/Headers/TPLinkAction.h" />
+        <header-file src="src/ios/TPSDK.framework/Headers/TPReqObj.h" />
+        <header-file src="src/ios/TPSDK.framework/Headers/TPRespObj.h" />
+        <header-file src="src/ios/TPSDK.framework/Headers/TPSDK.h" />
+		
+        <framework src="TPSDK.framework" />
+		
+		<config-file target="*-Info.plist" parent="CFBundleURLTypes">
+            <array>
+                <dict>
+					<key>CFBundleTypeRole</key>
+					<string>Editor</string>
+					<key>CFBundleURLName</key>
+					<string>CryptoHeroes</string>
+					<key>CFBundleURLSchemes</key>
+					<array>
+						<string>CryptoHeroes</string>
+					</array>
+				</dict>
+            </array>
+        </config-file>
+		
+		<config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
+            <array>
+				<string>tpoutside</string>
+				<string>weixin</string>
+				<string>itms-apps</string>
+				<string>sinaweibohd</string>
+				<string>sinaweibo</string>
+				<string>weibosdk</string>
+				<string>weibosdk2.5</string>
+				<string>mqqapi</string>
+				<string>mqq</string>
+				<string>mqqOpensdkSSoLogin</string>
+				<string>mqqconnect</string>
+				<string>mqqopensdkdataline</string>
+				<string>mqqopensdkgrouptribeshare</string>
+				<string>mqqopensdkfriend</string>
+				<string>mqqopensdkapi</string>
+				<string>mqqopensdkapiV2</string>
+				<string>mqqopensdkapiV3</string>
+				<string>mqzoneopensdk</string>
+				<string>wtloginmqq</string>
+				<string>wtloginmqq2</string>
+				<string>mqqwpa</string>
+				<string>mqzone</string>
+				<string>mqzonev2</string>
+				<string>mqzoneshare</string>
+				<string>wtloginqzone</string>
+				<string>mqzonewx</string>
+				<string>mqzoneopensdkapiV2</string>
+				<string>mqzoneopensdkapi19</string>
+				<string>mqzoneopensdkapi</string>
+				<string>mqzoneopensdk</string>
+				<string>tencentapi.qzone.reqContent</string>
+				<string>mqqbrowser</string>
+				<string>mttbrowser</string>
+			</array>
+        </config-file>
+		
+    </platform>
+	
+	<!-- osx -->
+    <platform name="osx">
+		
+        <!-- Cordova 2.5+ -->
+        <config-file target="config.xml" parent="/*">
+            <feature name="TPSDK">
+                <param name="osx-package" value="CDVTPSKD" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+		
+        <header-file src="src/ios/CDVTPSKD.h" />
+        <source-file src="src/ios/CDVTPSKD.m" />
+
+        <header-file src="src/ios/TPSDK.framework/Headers/TPApi.h" />
+        <header-file src="src/ios/TPSDK.framework/Headers/TPBlockchainHeader.h" />
+        <header-file src="src/ios/TPSDK.framework/Headers/TPLinkAction.h" />
+        <header-file src="src/ios/TPSDK.framework/Headers/TPReqObj.h" />
+        <header-file src="src/ios/TPSDK.framework/Headers/TPRespObj.h" />
+        <header-file src="src/ios/TPSDK.framework/Headers/TPSDK.h" />
+		
+        <framework src="TPSDK.framework" />
+		
+		<config-file target="*-Info.plist" parent="CFBundleURLTypes">
+            <array>
+                <dict>
+					<key>CFBundleTypeRole</key>
+					<string>Editor</string>
+					<key>CFBundleURLName</key>
+					<string>CryptoHeroes</string>
+					<key>CFBundleURLSchemes</key>
+					<array>
+						<string>CryptoHeroes</string>
+					</array>
+				</dict>
+            </array>
+        </config-file>
+		
+		<config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
+            <array>
+				<string>tpoutside</string>
+				<string>weixin</string>
+				<string>itms-apps</string>
+				<string>sinaweibohd</string>
+				<string>sinaweibo</string>
+				<string>weibosdk</string>
+				<string>weibosdk2.5</string>
+				<string>mqqapi</string>
+				<string>mqq</string>
+				<string>mqqOpensdkSSoLogin</string>
+				<string>mqqconnect</string>
+				<string>mqqopensdkdataline</string>
+				<string>mqqopensdkgrouptribeshare</string>
+				<string>mqqopensdkfriend</string>
+				<string>mqqopensdkapi</string>
+				<string>mqqopensdkapiV2</string>
+				<string>mqqopensdkapiV3</string>
+				<string>mqzoneopensdk</string>
+				<string>wtloginmqq</string>
+				<string>wtloginmqq2</string>
+				<string>mqqwpa</string>
+				<string>mqzone</string>
+				<string>mqzonev2</string>
+				<string>mqzoneshare</string>
+				<string>wtloginqzone</string>
+				<string>mqzonewx</string>
+				<string>mqzoneopensdkapiV2</string>
+				<string>mqzoneopensdkapi19</string>
+				<string>mqzoneopensdkapi</string>
+				<string>mqzoneopensdk</string>
+				<string>tencentapi.qzone.reqContent</string>
+				<string>mqqbrowser</string>
+				<string>mttbrowser</string>
+			</array>
+        </config-file>
+
+    </platform>
+	
     <!-- android -->
     <platform name="android">
 	

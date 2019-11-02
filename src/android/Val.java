@@ -4,11 +4,11 @@ public class Val {
     public static String PACKAGE_NAME = "com.rdt.tpsdk";
 	
     public static String BLOCKCHAIN = "EOS";
-    public static String DAPP_NAME = "MyDAPP";
-    public static String DAPP_ICON = "https://test.net/img/logofav1.png";
-    public static String DAPP_MEMO = "MyDAPP based on EOS";
-    public static String DAPP_URL = "https://test.net/";
-    public static String DAPP_ACCOUNT = "testdapp";
+    public static String DAPP_NAME = "Crypto Heroes";
+    public static String DAPP_ICON = "https://cryptoheroes.net/img/logofav1.png";
+    public static String DAPP_MEMO = "Crypto Heroes game based on EOS";
+    public static String DAPP_URL = "https://cryptoheroes.net/";
+    public static String DAPP_ACCOUNT = "crheroestest";
 
     public static String WALLET_account = "";
     public static String WALLET_wallet = "";

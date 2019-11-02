@@ -47,7 +47,7 @@ public class TPSDK extends CordovaPlugin {
      */
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
-        try {
+        //try {
 			Log.e(LOG_TAG, "RECEIVE INTENT -> " + action);
 			
             if ( action.equals("AuthTP") ) {
@@ -102,12 +102,12 @@ public class TPSDK extends CordovaPlugin {
 				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
 				return false;
 			}
-        } catch (JSONException e) {
+        /*} catch (JSONException e) {
             final String errorMessage = e.getMessage();
             Log.e(LOG_TAG, errorMessage);
             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, errorMessage));
             return false;
-        }
+        }*/
     }
 	
 	// JSONArray action_data

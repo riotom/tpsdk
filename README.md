@@ -1,16 +1,39 @@
 
+
 1. To install the plugin, use the Cordova CLI:
 
     ```bash
     cordova plugin add https://github.com/rommzestz/tpsdk.git
     ```
 
-1. Confirm that the following is now in your `config.xml` file:
+2. Confirm that the following is now in your `config.xml` file:
 
 ```xml
     <platform name="android">
         <plugin name="TPSDK" value="com.rdt.tpsdk.TPSDK" />
     </platform>
+    <platform name="ios">
+        <plugin name="TPSDK" value="com.rdt.tpsdk.TPSDK" />
+    </platform>
+    <platform name="osx">
+        <plugin name="TPSDK" value="com.rdt.tpsdk.TPSDK" />
+    </platform>
+```
+
+2.1 If platform IOS or OSX add to `AddDelegate.m` file:
+
+```xml
+	#import <TPSDK/TPSDK.h>
+	
+	
+    - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+	{
+		[TPApi handleURL:url options:options result:^(TPRespObj *respObj) {
+			NSLog(@"TPSDK AppDelegate--> OK");
+			[NSNotificationCenter.defaultCenter postNotificationName:@"TPSDK_notify" object:respObj.data];
+		}];
+		return YES;
+	}
 ```
 
 ## Using the plugin
@@ -25,8 +48,10 @@ auth with TokenPocket. For example:
 window.plugins.TPSDK.AuthTP({
 		action: 'android.intent.action.VIEW'
 	},
-	function (res) { 
-		var json = JSON.parse( res );
+	function (json) {
+		if(typeof json !== 'object'){
+			json = JSON.parse( json );
+		}
 		if( json.result == 0 ){
 			alert('Canceled');
 		}
@@ -74,8 +99,10 @@ var transaction = {
 window.plugins.TPSDK.PushAction({
 		transaction: [ transaction ]
 	},
-	function (res) { 
-		var json = JSON.parse( res );
+	function (json) {
+		if(typeof json !== 'object'){
+			json = JSON.parse( json );
+		}
 		if( json.result == 0 ){
 			return { result:false, message:'Canceled' };
 		}
