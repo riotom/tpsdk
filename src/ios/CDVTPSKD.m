@@ -67,8 +67,8 @@ NSString* CallBackId = nil;
     NSLog(@"AuthTP received-->action %@", action);
 	
 	TPLoginObj *login = [TPLoginObj new];
-    login.dappName = @"Crypto Heroes";
-    login.dappIcon = @"https://cryptoheroes.net/img/logofav1.png";
+    login.dappName = @"Crypto";
+    login.dappIcon = @"https://www.net/img/logofav1.png";
     login.blockchain = @"eos";
     [TPApi sendObj:login];
 }
@@ -90,8 +90,8 @@ NSString* CallBackId = nil;
     NSLog(@"PushAction received--> %@", action);
     
     TPPushTransactionObj *transaction = [TPPushTransactionObj new];
-    transaction.dappName = @"Crypto Heroes";
-    transaction.dappIcon = @"https://cryptoheroes.net/img/logofav1.png";
+    transaction.dappName = @"Crypto";
+    transaction.dappIcon = @"https://www.net/img/logofav1.png";
     transaction.blockchain = @"eos";
     transaction.actions = action;
     /*
@@ -100,7 +100,7 @@ NSString* CallBackId = nil;
                               @"authorization": @[@{@"actor": @"xxxxx",
                                                     @"permission": @"active"}],
                               @"data": @{@"from": @"xxxxx",
-                                         @"to": @"crheroestest",
+                                         @"to": @"xxxx",
                                          @"quantity": @"0.0001 EOS",
                                          @"memo": @"Memo string..."},
                               }];
@@ -125,11 +125,11 @@ NSString* CallBackId = nil;
     NSLog(@"TPTransfer received-->action %@", action);
 	
     TPTransferObj *transfer = [TPTransferObj new];
-    transfer.dappName = @"Crypto Heroes";
-    transfer.dappIcon = @"https://cryptoheroes.net/img/logofav1.png";
+    transfer.dappName = @"Crypto";
+    transfer.dappIcon = @"https://www.net/img/logofav1.png";
     transfer.symbol = @"EOS";
     transfer.contract = @"eosio.token";
-    transfer.to = @"crheroestest";
+    transfer.to = @"xxxx";
     transfer.memo = @"Memo string...";
     transfer.precision = @(4);
     transfer.amount = @(0.0001);
@@ -140,12 +140,12 @@ NSString* CallBackId = nil;
 /** INIT DAPP */
 - (void)initDapp {
 	//SET dapp ID, exacty copy from plugin.xml above CFBundleURLSchemes section
-    [TPApi registerAppID:@"CryptoHeroes"];
+    [TPApi registerAppID:@"Crypto"];
 	[TPApi enableLog:YES];
 	/*
 	NSError *err;
 	SET seed, locked for local db
-	[TPApi setSeed:@"8718669dr8n2tdYTFVTRbd5fytf65e4wv4e" error:&err];
+	[TPApi setSeed:@"871864wv4e" error:&err];
 	if (err) {
 		NSLog(@"%@", err.localizedDescription);
 	}
